@@ -1,0 +1,1 @@
+{"root":["./src/shims-vue.d.ts","./src/vite-env.d.ts","./src/pages/interfaces/intLogin.ts","./src/pages/services/serLogin.ts","./src/ts/app.ts","./src/ts/axiosConfig.ts","./src/ts/routes/loginRouter.ts","./src/pages/components/Dashboard.vue","./src/pages/components/login.vue","./src/ts/MainComponent.vue"],"version":"5.6.2"}

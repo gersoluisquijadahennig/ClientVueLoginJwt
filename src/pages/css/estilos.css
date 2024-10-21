@@ -1,0 +1,76 @@
+.wrapper {
+  background-image: url('/img/background_1.jpg');
+  background-size: cover; /* Ajusta el tamaño de la imagen al contenedor */
+  background-position: center; /* Centra la imagen */
+  min-height: 100vh; /* Asegúrate de que cubra toda la altura de la ventana */
+  display: flex;
+  justify-content: center; /* Centro horizontal de los hijos */
+  align-items: center; /* Centro vertical de los hijos */
+}
+
+.contenedor {
+  max-width: 300px; /* Ancho máximo del contenedor */
+  margin: 0; /* Sin margen */
+  background-color: rgba(255, 255, 255, 0.9); /* Fondo blanco con opacidad para el contenido */
+  padding: 20px;
+  border-radius: 10px; /* Bordes redondeados */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra para destacar el contenedor */
+  height: auto; /* Ajusta la altura automáticamente según el contenido */
+  position: relative; /* Posicionamiento relativo */
+  right: 0; /* Alinea el contenedor a la derecha */
+}
+
+.title {
+  color: #165587;
+}
+
+.tabla_login {
+  margin: 0 auto; /* Centra la tabla */
+  padding: 10px;
+}
+
+.txt_login {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.field {
+  margin-top: 20px;
+}
+
+.btn_ingresar {
+  width: 100%;
+  background-color: #165587;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+.btn_ingresar:hover {
+  background-color: #0d3c72;
+}
+
+.footer_ssbb {
+  margin-top: auto; /* Empuja el footer al final del contenedor */
+  font-size: 12px;
+  text-align: center;
+  color: #ffffff;
+  padding: 10px; /* Agrega un poco de padding para separar el texto del borde */
+}
+
+.label_desa {
+  font-weight: bold;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
