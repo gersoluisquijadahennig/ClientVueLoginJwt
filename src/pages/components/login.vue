@@ -6,10 +6,10 @@
         <tbody>
           <tr id="tr_principal">
             <td>
-              <input id="runUser" type="text" class="txt_login" autocomplete="off" placeholder="Usuario"
-                style="width:240px;" autofocus required @keydown.enter="acceder"  value="Gerso@gmail.com"/>
-              <input id="passwordUser" type="password" class="txt_login" placeholder="Contraseña" style="width:240px;"
-                required @keydown.enter="acceder" value="gquijada561" />
+              <input v-model="form.run" type="text" class="txt_login" autocomplete="off" placeholder="Usuario"
+                style="width:240px;" autofocus required @keydown.enter="acceder" />
+              <input v-model="form.clave" type="password" class="txt_login" placeholder="Contraseña" style="width:240px;"
+                required @keydown.enter="acceder" />
               <a href="#" id="olvida_clave">¿Olvidaste tu contraseña?</a>
             </td>
           </tr>
@@ -18,7 +18,6 @@
       <button @click="acceder" class="btn_ingresar">
         <span class="state">Acceder</span>
       </button>
-      <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
     </div>
     <div class="footer_ssbb">
       <label class="label_desa">
@@ -29,56 +28,43 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { LoginInput } from '../interfaces/intLogin';
+import { reactive} from 'vue';
 import ServicesLogin from '../services/serLogin';
 import { useRouter } from 'vue-router';
+import { useLoginStore } from '../store/loginStore';
 
+const loginStore = useLoginStore();
 const router = useRouter()
 
-const errorMessage = ref('');
+interface LoginInput {
+  run: string;
+  clave: string;
+}
+
+// Update the form variable to be of type LoginInput
+const form = reactive<LoginInput>({
+  run: 'Gerso@gmail.com',
+  clave: 'gquijada561',
+})
 
 const acceder = async () => {
-  const getInputValues = (): LoginInput | null => {
-    const runInput = document.getElementById('runUser') as HTMLInputElement | null;
-    const passwordInput = document.getElementById('passwordUser') as HTMLInputElement | null;
 
-    if (runInput && passwordInput) {
-      return {
-        run: runInput.value,
-        password: passwordInput.value,
-      };
-    }
-    return null;
-  };
-
-  const inputValues = getInputValues();
-
-  if (inputValues) {
-    const { run, password } = inputValues;
-
-    if (!run || !password) {
-      errorMessage.value = 'Por favor, completa todos los campos.';
-      return;
-    }
-
-    try {
-      console.log(inputValues);
-      const response = await ServicesLogin.getDataSession(run, password);
-      // almacenar el token en el local storage
-      console.log(response.access_token);
-      localStorage.setItem('token', response.access_token);
-      // Redirigir a la página de inicio con vue router
-      router.push('/dashboard');
-      
-    } catch (err) {
-      console.error('Error al obtener los datos de sesión', err);
-      errorMessage.value = 'Credenciales incorrectas. Intenta nuevamente.'; // Mostrar mensaje de error
-    }
-  } else {
-    console.error('No se encontraron los elementos input correspondientes.');
+  if(!form.run && !form.run){
+    return;
   }
-};
+  try{
+    loginStore.user = await ServicesLogin.login(form.run, form.clave)
+    router.push('/dashboard')
+  }catch(error){
+    loginStore.user = null;
+    return;
+  }
+  
+
+
+}
+    
+
 </script>
 
 <style scoped>

@@ -2,7 +2,7 @@ import axiosConfig from '../../ts/axiosConfig';
 import { SessionData , Me} from '../interfaces/intLogin';
 
 export default class ServicesLogin {
-  static async getDataSession(email: string, password: string): Promise<any> {
+  static async login(email: string, password: string): Promise<any> {
     try {
       const response = await axiosConfig.post<SessionData>('/login', {
         email, password
@@ -25,26 +25,18 @@ export default class ServicesLogin {
     }
   }
 
-  static async refreshToken(): Promise<any> {
+  static async checkAuth(): Promise<any> {
     try {
-      const response = await axiosConfig.post('/refresh');
-      return response.data;
+      const response = await axiosConfig.get('/verify'); // Ruta para obtener datos del usuario autenticado
+      return response.data;  // Si hay respuesta, el usuario está autenticado
     } catch (error) {
-      console.error('Error al renovar el token:', error);
       throw error;
     }
-  }
+  };
 
   static async logout(): Promise<any> {
     try {
       const response = await axiosConfig.post('/logout');
-      
-      // Eliminar el token del almacenamiento local
-      localStorage.removeItem('token');
-      
-      // Eliminar la cookie del token
-      document.cookie = `access_token=;`;
-      
       return response.data;
     } catch (error) {
       console.error('Error al cerrar sesión:', error);

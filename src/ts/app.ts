@@ -5,9 +5,12 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import router from './routes/loginRouter'; // Importa el enrutador
 import MainComponent from './MainComponent.vue'; // Aquí faltaban las comillas de cierre
 import axiosConfig from './axiosConfig';
+import { createPinia } from 'pinia'
 
+const pinia = createPinia()
 const app = createApp(MainComponent);
 app.config.globalProperties.$http = axiosConfig;
 
 app.use(router); // Usa el enrutador
+app.use(pinia)
 app.mount('#app'); // Monta la aplicación en el elemento con el ID "app"

@@ -1,9 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { jwtDecode } from "jwt-decode";
 import LoginPage from '../../pages/components/login.vue';
 import ProtectedRoute from '../../pages/components/Dashboard.vue';
+import { useLoginStore } from '../../pages/store/loginStore';
 import ServicesLogin from '../../pages/services/serLogin';
-
 
 const routes = [
     {
@@ -14,7 +13,7 @@ const routes = [
     { 
       path: '/dashboard', 
       component: ProtectedRoute,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true }, 
     },
 ];
 
@@ -23,45 +22,31 @@ const router = createRouter({
     routes
 });
 
-// Función para verificar si el token es válido localmente
-const isTokenValid = (token: string) => {
-  try {
-    const decoded = jwtDecode<any>(token);
-    const currentTime = Date.now() / 1000; // Tiempo actual en segundos
-    return decoded.exp > currentTime; // El token es válido si no ha expirado
-  } catch (error) {
-    return false; // Si hay un error al decodificar, el token no es válido
-  }
-};
-
 router.beforeEach(async (to, _from, next) => {
-    const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-    const token = localStorage.getItem('token');
-  
-    if (requiresAuth) {
-      if (token && isTokenValid(token)) {
-        next();
-      } else {
-        await ServicesLogin.refreshToken()
-            .then(response => {
-                // Guardar el nuevo token
-                localStorage.setItem('token', response.data.access_token);
-                console.log('Token renovado automáticamente');
-            })
-            .catch(error => {
-                console.error('Error al renovar el token', error);
-                
-                // Eliminar el token
-                localStorage.removeItem('token');
-                
-                // Redirigir a login si es necesario
-                window.location.href = '/login';
-                
-            });
+  const loginStore = useLoginStore();
+  // Verifica si la ruta requiere autenticación
+  if (to.meta.requiresAuth) {
+    // Verifica si ya hay datos de autenticación
+    if (!loginStore.isAuthenticated) {
+      // Intenta verificar si la sesión es válida (consulta al backend usando checkAuth)
+      try {
+        //await ServicesLogin.checkAuth(); // Intenta autenticar con cookies
+        loginStore.user = await ServicesLogin.me();
+        if (loginStore.isAuthenticated) {
+          next();  // Permite la navegación
+        } else {
+          next('/login');  // Redirige a la página de login si no está autenticado
+        }
+      } catch (error) {
+        next('/login');  // Si hay algún error, redirige a login
       }
     } else {
-      next();
+      next();  // Si ya está autenticado, permite la navegación
     }
+  } else {
+    next();  // Si no requiere autenticación, permite la navegación
+  }
 });
+
 
 export default router;
